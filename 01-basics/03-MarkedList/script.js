@@ -37,34 +37,20 @@ const App = defineComponent({
       filter: {
         search: ''
       },
-      marked: false,
-      filteredEmails: []
+      marked: false
 
     }
   },
-  watch: {
-     filteredEmails: {
-       immediate: true,
-      handler() {
-        this.filteredEmails = this.filterEmails
-      }
-     }
-  },
   computed: {
-    markedItem() {
-    for (let item of this.filteredEmails) {
-      if (this.filter.search.length > 0 && item['email'].toLowerCase().includes(this.filter.search.toLowerCase())){
-        item['marked'] = true;
-      } else {
-        item['marked'] = false;
-      }
-    }
-    return this.filteredEmails;
-  },
+
    filterEmails() {
       let emailsDict = [];
    for (let item of this.emails) {
-     emailsDict.push({'email': item, 'marked': false})
+     let markedClass = false
+           if (this.filter.search.length > 0 && item.toLowerCase().includes(this.filter.search.toLowerCase())){
+        markedClass = true;
+      }
+     emailsDict.push({'email': item, 'marked': markedClass})
    }
    return emailsDict
  }

@@ -16,11 +16,10 @@
         <div class="form-group">
           <input type="search"
                  v-model.trim="filter.search"
-                 @input="filteredEmails = markedItem"
           />
         </div>
         <ul>
-          <li v-for="item in filteredEmails" v-bind:class="{marked: item.marked}" >
+          <li v-for="item in filterEmails" :class="{marked: item.marked}" >
             {{ item.email }}
           </li>
         </ul>
