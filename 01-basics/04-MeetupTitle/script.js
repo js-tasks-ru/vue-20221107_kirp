@@ -19,21 +19,13 @@ const App = defineComponent({
   data() {
      return {
        meetupsRange: [1,2,3,4,5],
-       meetups: [],
        MeetUpTitle: 'MEETUP_TITLE',
-       meetupSelected: null,
-       meetupApiHeaders : []
+       meetupSelected: null
      }
   },
   watch: {
-    meetupApiHeaders: {
-      immediate: true,
-      handler() {
-        this.meetupApiHeaders = this.getMeetUpFromApi
-    }
-      },
     meetupSelected: function() {
-       this.meetupApiHeaders[this.meetupSelected].then(value => {
+       this.getMeetUpFromApi[this.meetupSelected].then(value => {
              this.MeetUpTitle = value.title
        });
     }
