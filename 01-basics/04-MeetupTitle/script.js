@@ -25,21 +25,11 @@ const App = defineComponent({
   },
   watch: {
     meetupSelected: function() {
-       this.getMeetUpFromApi[this.meetupSelected].then(value => {
-             this.MeetUpTitle = value.title
-       });
+      fetchMeetupById(this.meetupSelected).then((meetup) => {
+        return this.MeetUpTitle = meetup.title
+        }
+      )
     }
-
-  },
-  computed: {
-     getMeetUpFromApi() {
-       let meetUpsList = {};
-       for (let item of this.meetupsRange) {
-         let data = fetchMeetupById(item);
-         meetUpsList[item] = data;
-       }
-       return meetUpsList
-     }
   }
 });
 
