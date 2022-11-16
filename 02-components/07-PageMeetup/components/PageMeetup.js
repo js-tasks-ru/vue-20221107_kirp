@@ -50,12 +50,12 @@ props:{
   template: `
     <div class="page-meetup">
       <!-- meetup view -->
-       <MeetupView v-if="meetUpData" :meetup="meetUpData" />
+       <MeetupView v-if="typeof meetUpData === 'object' && meetUpData!=null " :meetup="meetUpData" />
       <UiContainer v-else-if="isMeetUpUpdated==false">
         <UiAlert text="Загрузка"> </UiAlert>
       </UiContainer>
 
-      <UiContainer v-else>
+      <UiContainer v-else-if="meetUpData==null">
         <UiAlert text="Возникла ошибка: такого митапа нет"></UiAlert>
       </UiContainer>
     </div>`,
