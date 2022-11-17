@@ -27,7 +27,6 @@ props:{
   computed: {
     getMeetUpData: function() {
       fetchMeetupById(this.meetupId).then((meetup) => {
-        console.log(meetup)
         this.meetUpData = meetup
          }).catch((error) => {
         this.meetUpData = null
@@ -36,8 +35,6 @@ props:{
     }
   },
   watch: {
-    deep: true,
-    immediate:true,
     meetUpData: function(newVal, oldVal){
       if (newVal == oldVal){
         return this.isMeetUpUpdated = false
@@ -50,12 +47,12 @@ props:{
   template: `
     <div class="page-meetup">
       <!-- meetup view -->
-       <MeetupView v-if="typeof meetUpData === 'object' && meetUpData!=null " :meetup="meetUpData" />
+       <MeetupView v-if="typeof meetUpData === 'object' && meetUpData != null " :meetup="meetUpData" />
       <UiContainer v-else-if="isMeetUpUpdated==false">
         <UiAlert text="Загрузка"> </UiAlert>
       </UiContainer>
 
-      <UiContainer v-else-if="meetUpData==null">
+      <UiContainer v-else-if="meetUpData == null">
         <UiAlert text="Возникла ошибка: такого митапа нет"></UiAlert>
       </UiContainer>
     </div>`,

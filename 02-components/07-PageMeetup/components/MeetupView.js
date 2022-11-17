@@ -53,8 +53,5 @@ export default defineComponent({
           </div>
         </div>
       </ui-container>
-    </div>`,
-//   template: `
-//   <div> {{ meetup }}</div>
-//   `
+    </div>`
 });
