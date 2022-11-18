@@ -10,7 +10,7 @@ export default defineComponent({
 
   data() {
     return {
-      count: 0,
+      count: undefined,
     };
   },
 
@@ -21,10 +21,10 @@ export default defineComponent({
         <CounterButton :count="count" @update:count="count = $event"  @update="count" />
       </p>
       <p>
-        <CounterButton v-model:count="count" @update="count" ></CounterButton>
+        <CounterButton v-model:count="count" @update:count="count = $event"  @update="count" ></CounterButton>
       </p>
       <p>
-        <CounterButton v-model:count="count" @update="count"></CounterButton>
+        <CounterButton v-model:count="count" @update:count="count = $event"  @update="count"></CounterButton>
       </p>
     </div>
   `,
