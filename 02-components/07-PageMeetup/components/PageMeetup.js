@@ -21,20 +21,18 @@ props:{
   data(){
     return {
       meetUpData: undefined,
-      isLoading: true,
       meetUpNotFound: undefined
     }
   },
   methods: {
     geetMeetUpData() {
-      this.isLoading = true
+      this.meetUpData = undefined
       fetchMeetupById(this.meetupId).then((meetup) => {
         this.meetUpData = meetup
         this.meetUpNotFound = undefined
          }).catch((error) => {
         this.meetUpNotFound = error.message
       });
-      this.isLoading = false
   }
   },
   mounted: function() {
@@ -50,10 +48,9 @@ props:{
     <div class="page-meetup">
       <!-- meetup view -->
        <MeetupView v-if="typeof meetUpData === 'object' && meetUpNotFound == undefined" :meetup="meetUpData" />
-      <UiContainer v-else-if="isLoading == true">
-        <UiAlert text="Загрузка"> </UiAlert>
+      <UiContainer v-else-if="meetUpData == undefined && meetUpNotFound == undefined">
+        <UiAlert text="Загрузка..."> </UiAlert>
       </UiContainer>
-
       <UiContainer v-else-if="meetUpNotFound != undefined">
         <UiAlert :text="meetUpNotFound"></UiAlert>
       </UiContainer>
