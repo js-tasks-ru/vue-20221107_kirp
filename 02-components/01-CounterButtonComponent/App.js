@@ -18,13 +18,13 @@ export default defineComponent({
     <div class="sample container">
       <p>count = {{ count }}</p>
       <p>
-        <CounterButton :count="count" @update:count="count = $event" />
+        <CounterButton :count="count" @update:count="count = $event"  @update="count" />
       </p>
       <p>
-        <CounterButton v-model:count="count"></CounterButton>
+        <CounterButton v-model:count="count" @update:count="count = $event"  @update="count" ></CounterButton>
       </p>
       <p>
-        <CounterButton v-model:count="count"></CounterButton>
+        <CounterButton v-model:count="count" @update:count="count = $event"  @update="count"></CounterButton>
       </p>
     </div>
   `,

@@ -19,19 +19,18 @@ export default defineComponent({
 
 
   },
-  data(){
+  props: {
+    meetup: {
+      type: Object,
+      required:true
+
+    },
+  },
+ data(){
     return {
       withoutAgendaDescription: 'Программа пока пуста...'
     }
   },
-
-  props: {
-    meetup: {
-      type: Object,
-      required: true,
-    },
-  },
-
   template: `
     <div>
       <!-- meetup cover-->
@@ -54,5 +53,5 @@ export default defineComponent({
           </div>
         </div>
       </ui-container>
-    </div>`,
+    </div>`
 });
