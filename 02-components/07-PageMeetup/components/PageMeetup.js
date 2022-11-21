@@ -22,39 +22,40 @@ props:{
     return {
       meetUpData: undefined,
       isLoading: true,
-      meetUpNotFound: 'Not found'
+      meetUpNotFound: undefined
     }
   },
-  mounted: function() {
-    this.isLoading = true
-      fetchMeetupById(this.meetupId).then((meetup) => {
-        this.meetUpData = meetup
-         }).catch((error) => {
-        this.meetUpData = error
-      });
-      this.isLoading = false
-    },
-  watch: {
-    meetupId: function() {
+  methods: {
+    geetMeetUpData() {
       this.isLoading = true
       fetchMeetupById(this.meetupId).then((meetup) => {
         this.meetUpData = meetup
+        this.meetUpNotFound = undefined
          }).catch((error) => {
-        this.meetUpData = error.message
+        this.meetUpNotFound = error.message
       });
       this.isLoading = false
+  }
+  },
+  mounted: function() {
+      this.geetMeetUpData()
+    },
+  watch: {
+    meetupId: function() {
+      this.geetMeetUpData()
     }
   },
+
   template: `
     <div class="page-meetup">
       <!-- meetup view -->
-       <MeetupView v-if="typeof meetUpData === 'object'" :meetup="meetUpData" />
+       <MeetupView v-if="typeof meetUpData === 'object' && meetUpNotFound == undefined" :meetup="meetUpData" />
       <UiContainer v-else-if="isLoading == true">
         <UiAlert text="Загрузка"> </UiAlert>
       </UiContainer>
 
-      <UiContainer v-else-if="meetUpData == meetUpNotFound">
-        <UiAlert text="Возникла ошибка: такого митапа нет"></UiAlert>
+      <UiContainer v-else-if="meetUpNotFound != undefined">
+        <UiAlert :text="meetUpNotFound"></UiAlert>
       </UiContainer>
     </div>`,
 });
