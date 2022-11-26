@@ -1,18 +1,13 @@
 <template>
-  <div class="dropdown dropdown_opened">
-    <button type="button" class="dropdown__toggle dropdown__toggle_icon">
-      <ui-icon icon="tv" class="dropdown__icon" />
-      <span>Title</span>
+  <div class="dropdown " :class="{ dropdown_opened: hidden }">
+    <button @click="toogle" type="button" class="dropdown__toggle" :class="{ dropdown__toggle_icon: iconExists}">
+      <ui-icon v-if="iconValue != undefined"  :icon="iconValue" class="dropdown__icon" />
+      <span> {{ name }}</span>
     </button>
-
-    <div class="dropdown__menu" role="listbox">
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 1
-      </button>
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 2
+    <div class="dropdown__menu" v-if="hidden == true" role="listbox">
+      <button v-for="option in options"  @click="toogle(); changeTitle(option['text']); chooseNewValue(option['value']); getIcon(option['icon']); $emit('update:modelValue', option['value'])" class="dropdown__item" :class="{ dropdown__item_icon: iconExists}" role="option" type="button">
+        <ui-icon v-if="option['icon'] != undefined" :icon="option['icon']" class="dropdown__icon" />
+        {{ option['text'] }}
       </button>
     </div>
   </div>
@@ -23,8 +18,59 @@ import UiIcon from './UiIcon';
 
 export default {
   name: 'UiDropdown',
-
+  data() {
+    return {
+      hidden: false,
+      iconExists: false,
+      name: this.title,
+      chosenValue: this.modelValue,
+      iconValue: undefined
+    };
+  },
   components: { UiIcon },
+  props: {
+    options: {
+      type:Array
+    },
+    modelValue: {
+      default:undefined
+    },
+    title: {
+      type:String
+    }
+
+  },
+  emits: ['update:modelValue'],
+  methods:{
+    toogle(){
+      this.hidden = !this.hidden;
+    },
+    changeTitle(option) {
+      this.name=option
+    },
+    chooseNewValue(value){
+      this.chosenValue = value
+    },
+    getIcon(value){
+      this.iconValue = value;
+    }
+  },
+  mounted: function() {
+      let found = this.options.find(element => element.icon != undefined);
+      if (found){
+        this.iconExists = true
+      }
+    },
+
+  watch:{
+    modelValue: function() {
+      if (this.modelValue != undefined){
+        let found = this.options.find(element => element.value==this.modelValue);
+         this.name = found['text'];
+         this.iconValue = found['icon'];
+      }
+    }
+  }
 };
 </script>
 
