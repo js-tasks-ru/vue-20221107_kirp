@@ -1,24 +1,44 @@
 <template>
-  <div class="toasts">
-    <div class="toast toast_success">
-      <ui-icon class="toast__icon" icon="check-circle" />
-      <span>Success Toast Example</span>
-    </div>
-
-    <div class="toast toast_error">
-      <ui-icon class="toast__icon" icon="alert-circle" />
-      <span>Error Toast Example</span>
-    </div>
-  </div>
+ <uiToast v-if="toastList != []" :listForShow="toastList"></uiToast>
 </template>
 
 <script>
-import UiIcon from './UiIcon.vue';
+
+import UiToast from './UiToast.vue';
 
 export default {
   name: 'TheToaster',
 
-  components: { UiIcon },
+  components: {UiToast },
+
+  data(){
+    return {
+      message: undefined,
+      toastSuccess: undefined,
+      iconType: undefined,
+      toastList: []
+    };
+  },
+  methods: {
+    success(message){
+      this.message = message;
+      this.toastSuccess = true;
+      this.iconType = 'check-circle';
+      this.toastList.push({"message": this.message, 'toastSuccess': this.toastSuccess, 'iconType': this.iconType} )
+      setTimeout(() => {
+        this.toastList.shift();
+      }, 5000);
+    },
+    error(message){
+      this.message = message;
+      this.toastSuccess = false;
+      this.iconType = 'alert-circle';
+      this.toastList.push({"message": this.message, 'toastSuccess': this.toastSuccess, 'iconType': this.iconType} )
+      setTimeout(() => {
+        this.toastList.shift();
+      }, 5000);
+    },
+  }
 };
 </script>
 
@@ -41,7 +61,7 @@ export default {
   }
 }
 
-.toast {
+:deep(.toast) {
   display: flex;
   flex: 0 0 auto;
   flex-direction: row;
@@ -55,19 +75,15 @@ export default {
   width: auto;
 }
 
-.toast + .toast {
-  margin-top: 20px;
-}
-
-.toast__icon {
+:deep(.toast__icon) {
   margin-right: 12px;
 }
 
-.toast.toast_success {
+:deep(.toast_success) {
   color: var(--green);
 }
 
-.toast.toast_error {
+:deep(.toast_error) {
   color: var(--red);
 }
 </style>
