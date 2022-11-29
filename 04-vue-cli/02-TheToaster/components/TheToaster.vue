@@ -28,7 +28,7 @@ export default {
   setTimeout(() => {
     this.toastList.shift();
   }, 5000);
-    },
+    }
   }
 };
 </script>
