@@ -10,12 +10,7 @@ export default {
   props:['title', 'image'],
   computed: {
     backgroundImage(){
-      if (this.image != null){
-        return 'url('+ this.image +')';
-      } else {
-        return 'var(--default-cover)';
-      }
-
+        return this.image ? `url('${this.image}')` : 'var(--default-cover)';
     }
   },
 };
