@@ -16,7 +16,7 @@
         <div class="form__buttons">
           <button type="submit" class="button button_primary button_block">Войти</button>
         </div>
-        <div class="form__append">Нет аккаунта? <a href="/register" class="link">Зарегистрируйтесь</a></div>
+        <div class="form__append">Нет аккаунта? <RouterLink :to="{name: 'register'}" class="link">Зарегистрируйтесь</RouterLink></div>
       </form>
     </ui-container>
   </div>
@@ -33,10 +33,26 @@ export default {
     UiFormGroup,
     UiContainer,
   },
+  data(){
+    return {
+      previousUrl:null
+
+  }
+  },
+  beforeRouteEnter(to, from, next) {
+     next(vm => {
+    vm.previousUrl = from.name
+  })
+},
 
   methods: {
     handleSubmit() {
-      // Требуется обработать сабмит формы
+      if (this.previousUrl != null) {
+        this.$router.push({name: this.previousUrl})
+      }else {
+        this.$router.push({name: 'main'})
+      }
+
     },
   },
 };
