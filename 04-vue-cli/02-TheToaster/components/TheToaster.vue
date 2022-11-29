@@ -18,13 +18,13 @@ export default {
   },
   methods: {
     success(message){
-      this.toastList.push({ message, 'toastSuccess': true, 'iconType': 'check-circle' } )
-  setTimeout(() => {
-    this.toastList.shift();
-  }, 5000);
+      this.setToasterType(message, true, 'check-circle')
     },
     error(message){
-     this.toastList.push({ message, 'toastSuccess': false, 'iconType': 'alert-circle' } )
+     this.setToasterType(message, false, 'alert-circle')
+    },
+    setToasterType(message, toastType, icontype){
+      this.toastList.push({ message, 'toastSuccess': toastType, 'iconType': icontype } )
   setTimeout(() => {
     this.toastList.shift();
   }, 5000);
