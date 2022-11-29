@@ -1,5 +1,5 @@
 <template>
- <uiToast v-if="toastList != []" :listForShow="toastList"></uiToast>
+ <uiToast v-if="toastList.length != 0" :listForShow="toastList"></uiToast>
 </template>
 
 <script>
@@ -13,30 +13,21 @@ export default {
 
   data(){
     return {
-      message: undefined,
-      toastSuccess: undefined,
-      iconType: undefined,
       toastList: []
     };
   },
   methods: {
     success(message){
-      this.message = message;
-      this.toastSuccess = true;
-      this.iconType = 'check-circle';
-      this.toastList.push({"message": this.message, 'toastSuccess': this.toastSuccess, 'iconType': this.iconType} )
-      setTimeout(() => {
-        this.toastList.shift();
-      }, 5000);
+      this.toastList.push({ message, 'toastSuccess': true, 'iconType': 'check-circle' } )
+  setTimeout(() => {
+    this.toastList.shift();
+  }, 5000);
     },
     error(message){
-      this.message = message;
-      this.toastSuccess = false;
-      this.iconType = 'alert-circle';
-      this.toastList.push({"message": this.message, 'toastSuccess': this.toastSuccess, 'iconType': this.iconType} )
-      setTimeout(() => {
-        this.toastList.shift();
-      }, 5000);
+     this.toastList.push({ message, 'toastSuccess': false, 'iconType': 'alert-circle' } )
+  setTimeout(() => {
+    this.toastList.shift();
+  }, 5000);
     },
   }
 };
@@ -59,31 +50,5 @@ export default {
     bottom: 72px;
     right: 112px;
   }
-}
-
-:deep(.toast) {
-  display: flex;
-  flex: 0 0 auto;
-  flex-direction: row;
-  align-items: center;
-  padding: 16px;
-  background: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
-  font-size: 18px;
-  line-height: 28px;
-  width: auto;
-}
-
-:deep(.toast__icon) {
-  margin-right: 12px;
-}
-
-:deep(.toast_success) {
-  color: var(--green);
-}
-
-:deep(.toast_error) {
-  color: var(--red);
 }
 </style>
