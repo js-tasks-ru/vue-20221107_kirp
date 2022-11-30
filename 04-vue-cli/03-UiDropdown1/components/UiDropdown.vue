@@ -1,18 +1,13 @@
 <template>
-  <div class="dropdown dropdown_opened">
-    <button type="button" class="dropdown__toggle dropdown__toggle_icon">
-      <ui-icon icon="tv" class="dropdown__icon" />
-      <span>Title</span>
+  <div class="dropdown " :class="{ dropdown_opened: hidden }">
+    <button @click="toogle" type="button" class="dropdown__toggle" :class="{ dropdown__toggle_icon: checkIfIconExists}">
+      <ui-icon v-if="CheckIconValue != undefined"  :icon="CheckIconValue" class="dropdown__icon" />
+      <span> {{ CheckButtonName }}</span>
     </button>
-
-    <div class="dropdown__menu" role="listbox">
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 1
-      </button>
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 2
+    <div class="dropdown__menu" v-show="hidden == true" role="listbox">
+      <button v-for="option in options"  @click="select(option)" class="dropdown__item" :class="{ dropdown__item_icon: checkIfIconExists}" role="option" type="button">
+        <ui-icon v-if="option['icon'] != undefined" :icon="option['icon']" class="dropdown__icon" />
+        {{ option['text'] }}
       </button>
     </div>
   </div>
@@ -23,8 +18,64 @@ import UiIcon from './UiIcon';
 
 export default {
   name: 'UiDropdown',
-
+  data() {
+    return {
+      hidden: false
+    };
+  },
   components: { UiIcon },
+  props: {
+    options: {
+      type:Array
+    },
+    modelValue: {
+      default:undefined
+    },
+    title: {
+      type:String
+    }
+
+  },
+  emits: ['update:modelValue'],
+  methods:{
+    toogle(){
+      this.hidden = !this.hidden;
+    },
+    select(option) {
+      this.toogle();
+      this.$emit('update:modelValue', option.value)
+    }
+  },
+  computed:{
+   checkIfIconExists:
+     function() {
+      let found = this.options.find(element => element.icon != undefined);
+      if (found){
+        return true
+      } else {
+        return false
+      }
+    },
+    CheckButtonName: function() {
+      if (this.modelValue != undefined){
+        let found = this.options.find(element => element.value==this.modelValue);
+         return found['text'];
+      } else {
+        return this.title
+      }
+
+    },
+    CheckIconValue: function() {
+      if (this.modelValue != undefined){
+        let found = this.options.find(element => element.value==this.modelValue);
+         return found['icon'];
+      } else {
+        return undefined
+      }
+
+    }
+
+  }
 };
 </script>
 

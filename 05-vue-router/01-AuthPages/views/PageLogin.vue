@@ -16,7 +16,7 @@
         <div class="form__buttons">
           <button type="submit" class="button button_primary button_block">Войти</button>
         </div>
-        <div class="form__append">Нет аккаунта? <a href="/register" class="link">Зарегистрируйтесь</a></div>
+        <div class="form__append">Нет аккаунта? <RouterLink :to="{name: 'register'}" class="link">Зарегистрируйтесь</RouterLink></div>
       </form>
     </ui-container>
   </div>
@@ -33,10 +33,13 @@ export default {
     UiFormGroup,
     UiContainer,
   },
-
   methods: {
     handleSubmit() {
-      // Требуется обработать сабмит формы
+      if (this.$route.query.from != undefined) {
+        this.$router.push(this.$route.query.from)
+      } else {
+        this.$router.push({name: 'main'})
+      }
     },
   },
 };
