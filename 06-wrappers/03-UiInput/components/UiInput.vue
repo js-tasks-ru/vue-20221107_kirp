@@ -57,11 +57,6 @@ export default {
     }
   },
   emits: ['update:modelValue'],
-  data(){
-    return{
-      leftIcon: ''
-    }
-  },
   methods:{
     setFocus(){
       this.$refs['input'].focus();
