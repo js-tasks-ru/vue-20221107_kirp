@@ -12,10 +12,6 @@ export default {
 
     },
     to: {
-    },
-    value: String,
-    modelValue:{
-
     }
   }
 };
