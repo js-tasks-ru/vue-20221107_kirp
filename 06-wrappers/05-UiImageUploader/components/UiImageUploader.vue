@@ -1,8 +1,9 @@
 <template>
   <div class="image-uploader">
-    <label class="image-uploader__preview image-uploader__preview-loading" style="--bg-url: url('/link.jpeg')">
+<!--    <label class="image-uploader__preview image-uploader__preview-loading" style="&#45;&#45;bg-url: url('/link.jpeg')">-->
+    <label class="image-uploader__preview image-uploader__preview-loading" :style="backgroundImage">
       <span class="image-uploader__text">Загрузить изображение</span>
-      <input type="file" accept="image/*" class="image-uploader__input" />
+      <input type="file" ref="input" accept="image/*" class="image-uploader__input" v-bind="$attrs" @change="uploadFile" />
     </label>
   </div>
 </template>
@@ -10,6 +11,49 @@
 <script>
 export default {
   name: 'UiImageUploader',
+  inheritAttrs: false,
+  props: {
+    preview: String,
+    uploader: Function
+  },
+  data(){
+    return{
+      imageUrl: this.preview,
+      pic:null
+
+
+    }
+  },
+  emits: ['upload:preview', 'remove:preview'],
+  computed: {
+    backgroundImage(){
+      return '--bg-url: url(' + this.imageUrl + ')'
+    }
+  },
+  methods: {
+    changePicture(file) {
+      // if (this.uploader) {
+      //     this.uploader(file)
+      //   }
+      console.log(file)
+    },
+    uploadFile() {
+        this.picture = this.$refs.input.files[0];
+//           let result = this.uploader(this.picture);
+//                 console.log(result);
+//          result.then(value => {
+//   console.log(value.image);
+//    this.imageUrl = String(value.image);
+// }).catch(err => {
+//   console.log(err);
+//   // 👉️ "Something went wrong"
+// });
+
+        // console.log(this.$refs.input)
+   let link = URL.createObjectURL(this.picture);
+     this.imageUrl = String(link);
+      }
+  }
 };
 </script>
 
