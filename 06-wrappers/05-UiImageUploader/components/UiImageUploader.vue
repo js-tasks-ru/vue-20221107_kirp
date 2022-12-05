@@ -1,14 +1,19 @@
 <template>
   <div class="image-uploader">
 <!--    <label class="image-uploader__preview image-uploader__preview-loading" style="&#45;&#45;bg-url: url('/link.jpeg')">-->
-    <label class="image-uploader__preview image-uploader__preview-loading" :style="backgroundImage">
-      <span class="image-uploader__text">Загрузить изображение</span>
-      <input type="file" ref="input" accept="image/*" class="image-uploader__input" v-bind="$attrs" @change="uploadFile" />
+    <label class="image-uploader__preview" :class="{'image-uploader__preview-loading': !isSUCCESS}" :style="backgroundImage">
+      <span class="image-uploader__text">{{ eventText }}</span>
+      <input type="file" v-if="!isSUCCESS" ref="input" accept="image/*" class="image-uploader__input" v-bind="$attrs" @change="uploadFile" />
+      <input type="file" v-else-if="isSUCCESS" ref="input" accept="image/*" class="image-uploader__input" v-bind="$attrs" @click="removeFile" />
     </label>
   </div>
 </template>
 
 <script>
+const
+  STATUS_INITIAL = 0,
+  STATUS_SUCCESS = 1,
+  STATUS_FAILED = 2;
 export default {
   name: 'UiImageUploader',
   inheritAttrs: false,
@@ -19,40 +24,49 @@ export default {
   data(){
     return{
       imageUrl: this.preview,
-      pic:null
-
-
+      eventText: 'Загрузить изображение',
+      currentStatus: null
     }
   },
-  emits: ['upload:preview', 'remove:preview'],
+  emits: ['select', 'upload', 'remove','error'],
   computed: {
     backgroundImage(){
-      return '--bg-url: url(' + this.imageUrl + ')'
-    }
+      if (this.currentStatus === STATUS_FAILED ||  typeof this.imageUrl != 'string'){
+        return ''
+      } else {
+        return '--bg-url: url(' + this.imageUrl + ')'
+      }
+
+
+    },
+    isInitial() {
+        return this.currentStatus === STATUS_INITIAL;
+      },
+    isSUCCESS() {
+        return this.currentStatus === STATUS_SUCCESS;
+      },
+    isFAILED() {
+        return this.currentStatus === STATUS_FAILED;
+      }
   },
   methods: {
-    changePicture(file) {
-      // if (this.uploader) {
-      //     this.uploader(file)
-      //   }
-      console.log(file)
-    },
     uploadFile() {
         this.picture = this.$refs.input.files[0];
-//           let result = this.uploader(this.picture);
-//                 console.log(result);
-//          result.then(value => {
-//   console.log(value.image);
-//    this.imageUrl = String(value.image);
-// }).catch(err => {
-//   console.log(err);
-//   // 👉️ "Something went wrong"
-// });
-
-        // console.log(this.$refs.input)
-   let link = URL.createObjectURL(this.picture);
-     this.imageUrl = String(link);
-      }
+          let result = this.uploader(this.picture);
+                this.eventText = 'Загрузка...'
+         result.then(value => {
+   this.imageUrl = String(value.image);
+   this.currentStatus = STATUS_SUCCESS
+    this.eventText = 'Удалить изображение';
+}).catch(err => {
+  this.currentStatus = STATUS_FAILED;
+  this.eventText = 'Загрузить изображение';
+});
+      },
+    removeFile() {
+         this.currentStatus = STATUS_INITIAL;
+         this.eventText = 'Загрузить изображение'
+    }
   }
 };
 </script>
