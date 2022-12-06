@@ -1,10 +1,8 @@
 <template>
-  <ui-input :type="inputType"  v-model="dataTimeValue" @update:modelValue="$emit('update:modelValue', handleEvent($event))" >
-    <template #right-icon>
-       <slot name="right-icon" />
-    </template>
-    <template #left-icon>
-       <slot name="left-icon" />
+
+    <ui-input :type="inputType"  v-model="customModel" v-bind="$attrs" :modelModifiers="sendModify">
+        <template v-for="slotName in Object.keys($slots)" #[slotName]>
+      <slot :name="slotName" />
     </template>
   </ui-input>
 </template>
@@ -23,88 +21,68 @@ export default {
     step: undefined
 
   },
+  inheritAttrs: false,
   data(){
     return{
-      dataTimeValue: undefined,
-      inputType: undefined,
-      showIcons: false,
-      dataValue: this.modelValue,
-      inputDate: null,
-      inputTime: null
+      dataValue: this.modelValue
     }
   },
-  mounted() {
-    let result;
-    let date = new Date(this.dataValue);
-        let hours = date.getHours();
-        let minutes = date.getMinutes();
-    let seconds = date.getSeconds();
-    this.inputDate = date.toISOString().split('T')[0];
-    this.inputTime = date.toISOString().split('T')[1];
+  computed: {
+    customModel: {
+      get() {
+        let result;
+        if(this.modelValue == null){
+          return result = ''
+        } else {
+        let date = new Date(this.modelValue);
 
-
-      if (this.type === 'time' && this.step === undefined){
+        console.log(date)
+        let hours = String(date.getUTCHours()).padStart(2, "0");
+        let minutes = String(date.getUTCMinutes()).padStart(2, "0");
+        let seconds = String(date.getUTCSeconds()).padStart(2, "0");
+        let inputDate = date.toISOString().split('T')[0];
+        let inputDateTime = date.toISOString().split('.')[0];
+        if (this.type === 'time' && (this.step != '30' || this.step == undefined)){
         result = hours + ':' + minutes;
-        this.inputType = this.type;
-      }else if (this.type === undefined && this.step === undefined) {
-        this.inputType = 'date';
-        result = date.toISOString().split('T')[0];
-      } else if (this.type === 'time' && this.step != undefined) {
-        this.inputType = this.type;
+      }else if (this.type === undefined || this.inputType == 'date') {
+        result = inputDate;
+      } else if (this.type === 'time' && this.step === '30') {
         result = hours + ':' + minutes + ':' + seconds;
       } else if (this.type === 'datetime-local'){
-        this.inputType = this.type;
-       result = date.toISOString().split('.')[0];
+       result = inputDateTime;
       }
-      this.dataTimeValue = result
-    },
-  methods:{
-    handleEvent(event) {
-      let getdate
-       let date = event.includes("-");
-      let time = event.includes(":")
-      let dateTime = event.includes("T");
-      if (date && dateTime != true){
-        getdate = new Date(event);
-        this.inputDate = event
-      } else if (time && dateTime != true){
-        this.inputTime = event
-        getdate = new Date(this.inputDate);
-      } else if (dateTime == true){
-        getdate = new Date(event);
-      }
-      this.dataValue = getdate.getTime()
-      return getdate.getTime()
+        return result;
+        }
+      },
 
+      set(value) {
+        if(value.includes(":") && !value.includes("T")){
+          value = '1970-01-01T' + value
+        }
+        let dateAsNumber = new Date(value).getTime()
+        this.$emit('update:modelValue', dateAsNumber);
+      },
     },
+    inputType: {
+      get() {
+        let value = this.type;
+         if (this.type == undefined) {
+                value = 'date';
+              }
+        return value;
+      },
+    },
+    sendModify(){
+          let modelModify = this.modelModifiers
+          if(this.type === 'datetime-local'){
+            modelModify.lazy = true;
+          }
+          return modelModify;
+        }
   },
-  // computed:{
-  //   setDataValue(){
-  //
-  //     let result
-  //   let date = new Date(this.dataValue)
-  //       let hours = date.getHours()
-  //       let minutes = date.getMinutes()
-  //   let seconds = date.getSeconds()
-  //
-  //     if (this.type === 'time' && this.step === undefined){
-  //       result = hours + ':' + minutes;
-  //       this.inputType = this.type;
-  //     }else if (this.type === undefined && this.step === undefined) {
-  //       this.inputType = 'date';
-  //       result = date.toISOString().split('T')[0];
-  //     } else if (this.type === 'time' && this.step != undefined) {
-  //       this.inputType = this.type;
-  //       result = hours + ':' + minutes + ':' + seconds;
-  //     } else if (this.type === 'datetime-local'){
-  //       this.inputType = this.type;
-  //      result = date.toISOString().split('.')[0];
-  //     }
-  //     return result
-  //   }
-  // },
-  emits: [...UiInput.emits]
-
-
+  emits: {
+    ...UiInput.emits,
+    'update:modelValue': null
+  }
 };
 </script>
