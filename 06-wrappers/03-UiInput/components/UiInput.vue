@@ -13,7 +13,7 @@
       ref="input"
       v-if="multiline"
       v-model="modelProxy"
-      @click="setFocus"
+      @click="focus"
       class="form-control"
       :class="{'form-control_sm': small, 'form-control_rounded': rounded}"
       v-bind="$attrs" />
@@ -58,7 +58,7 @@ export default {
   },
   emits: ['update:modelValue'],
   methods:{
-    setFocus(){
+    focus(){
       this.$refs['input'].focus();
 
     }
