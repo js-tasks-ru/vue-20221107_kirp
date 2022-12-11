@@ -1,35 +1,101 @@
+<!--+<template>-->
+<!--  <fieldset class="agenda-item-form">-->
+<!--    <button type="button" class="agenda-item-form__remove-button">-->
+<!--      <ui-icon icon="trash" />-->
+<!--    </button>-->
+
+<!--    <ui-form-group>-->
+<!--      <ui-dropdown title="Тип" :options="$options.agendaItemTypeOptions" name="type" />-->
+<!--    </ui-form-group>-->
+
+<!--    <div class="agenda-item-form__row">-->
+<!--      <div class="agenda-item-form__col">-->
+<!--        <ui-form-group label="Начало">-->
+<!--          <ui-input type="time" placeholder="00:00" name="startsAt" />-->
+<!--        </ui-form-group>-->
+<!--      </div>-->
+<!--      <div class="agenda-item-form__col">-->
+<!--        <ui-form-group label="Окончание">-->
+<!--          <ui-input type="time" placeholder="00:00" name="endsAt" />-->
+<!--        </ui-form-group>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    <ui-form-group label="Заголовок">-->
+<!--      <ui-input name="title" />-->
+<!--    </ui-form-group>-->
+<!--    <ui-form-group label="Описание">-->
+<!--      <ui-input multiline name="description" />-->
+<!--    </ui-form-group>-->
+<!--  </fieldset>-->
+<!--</template>-->
 <template>
   <fieldset class="agenda-item-form">
-    <button type="button" class="agenda-item-form__remove-button">
+    <button type="button" class="agenda-item-form__remove-button" @click="cleanAgenda">
       <ui-icon icon="trash" />
     </button>
 
     <ui-form-group>
-      <ui-dropdown title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
+      <ui-dropdown title="Тип" :options="$options.agendaItemTypeOptions" name="type" v-model="localAgendaItem.type" />
     </ui-form-group>
 
     <div class="agenda-item-form__row">
       <div class="agenda-item-form__col">
         <ui-form-group label="Начало">
-          <ui-input type="time" placeholder="00:00" name="startsAt" />
+          <ui-input
+            type="time"
+            placeholder="00:00"
+            name="startsAt"
+            v-model="localAgendaItem.startsAt"
+          />
         </ui-form-group>
       </div>
       <div class="agenda-item-form__col">
         <ui-form-group label="Окончание">
-          <ui-input type="time" placeholder="00:00" name="endsAt" />
+          <ui-input
+            type="time"
+            placeholder="00:00"
+            name="endsAt"
+            v-model="localAgendaItem.endsAt"
+          />
         </ui-form-group>
       </div>
     </div>
 
-    <ui-form-group label="Заголовок">
-      <ui-input name="title" />
+    <ui-form-group :label="setTitle">
+      <ui-input name="title"
+                v-model="localAgendaItem.title"
+                @change="
+              $emit('update:agendaItem', {
+                ...agendaItem,
+                title: $event.target.value,
+              })
+            "
+      />
     </ui-form-group>
-    <ui-form-group label="Описание">
-      <ui-input multiline name="description" />
+    <ui-form-group v-if="localAgendaItem.type == 'talk'" label="Докладчик">
+      <ui-input
+        name="speaker"
+        v-model="localAgendaItem.speaker"
+      />
+    </ui-form-group>
+    <ui-form-group v-if="localAgendaItem.type == 'talk' || localAgendaItem.type == 'other'"  label="Описание">
+      <ui-input multiline
+                name="description"
+                v-model="localAgendaItem.description"
+      />
+    </ui-form-group>
+    <ui-form-group v-if="localAgendaItem.type == 'talk'" label="Язык">
+      <ui-dropdown
+        title="Язык"
+        :options="$options.talkLanguageOptions"
+        name="language"
+        v-model="localAgendaItem.language"
+
+      />
     </ui-form-group>
   </fieldset>
 </template>
-
 <script>
 import UiIcon from './UiIcon';
 import UiFormGroup from './UiFormGroup';
@@ -165,7 +231,82 @@ export default {
       required: true,
     },
   },
+  data(){
+    return {
+      localAgendaItem: { ...this.agendaItem },
+
+
+    }
+  },
+
+  emits:['update:agendaItem', 'remove'],
+  computed:{
+        setTitle() {
+      if(this.localAgendaItem.type == 'talk'){
+        return 'Тема'
+      } else if (this.localAgendaItem.type == 'other'){
+        return 'Заголовок'
+      } else {
+        return 'Нестандартный текст (необязательно)'
+      }
+    }
+
+  },
+  methods: {
+    cleanAgenda(){
+      this.$emit('remove');
+    },
+      setLocalAgendaItemField({ field, value }) {
+      this.localAgendaItem[field] = value;
+    },
+  },
+ watch: {
+   agendaItem: {
+     deep: true,
+     immediate: true,
+     handler() {
+       if (this.agendaItem.id != this.localAgendaItem.id) {
+         this.localAgendaItem = {...this.agendaItem};
+       }
+
+     },
+   },
+   localAgendaItem: {
+     deep: true,
+     handler() {
+       this.$emit('update:agendaItem', {...this.localAgendaItem});
+       console.log(agendaItemFormSchemas[this.localAgendaItem])
+     }
+   },
+    'localAgendaItem.startsAt':{
+
+      deep: true,
+      handler(newVal, oldVal) {
+      let end_hms = this.localAgendaItem.endsAt;
+      let start_point_old = new Date("1970-01-01T" + newVal);
+      let start_point_new = new Date("1970-01-01T" + oldVal);
+      let end_point = new Date("1970-01-01T" + end_hms);
+
+      let difference = Math.abs(start_point_new.getTime() - start_point_old.getTime()) / 3600000;
+        let new_end_point_hours = end_point.getHours()
+             if (newVal > oldVal) {
+                new_end_point_hours = end_point.getHours() + difference
+        if (new_end_point_hours > 24){
+          new_end_point_hours -= 24;
+        }
+
+      } else if (newVal < oldVal) {
+                new_end_point_hours = end_point.getHours() - difference
+        if (new_end_point_hours > 24){
+          new_end_point_hours -= 24;
+        }
+      }
+      this.localAgendaItem.endsAt = String(new_end_point_hours).padStart(2, "0")  +':'+ String(end_point.getMinutes()).padStart(2, "0")
+      }
+    }
+ }
 };
+
 </script>
 
 <style scoped>
