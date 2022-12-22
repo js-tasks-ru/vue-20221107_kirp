@@ -1,10 +1,9 @@
 <script>
-import { compile } from 'vue';
-import alias from '@rollup/plugin-alias';
-
+import { compile, defineComponent, h } from 'vue';
 
 export default {
   name: 'TemplateRenderer',
+
   props: {
     template: {
       type: String,
@@ -21,19 +20,24 @@ export default {
       default: () => [],
     },
   },
-    plugins: [
-    alias({
-      entries: [
-        {
-        find: 'vue',
-        replacement: 'vue/dist/vue.esm-bundler.js',
-      },
-      ],
-    }),
-  ],
-render() {
-    const renderFunction = compile(this.template);
-    return compile(this.template);
+
+  computed: {
+    renderFunction() {
+      return compile(this.template);
+    },
+
+    componentFromTemplate() {
+      return defineComponent({
+        name: 'TemplateRendererInternal',
+        components: this.components,
+        props: ['bindings'],
+        render: this.renderFunction,
+      });
+    },
+  },
+
+  render() {
+    return h(this.componentFromTemplate, { bindings: this.bindings });
   },
 };
 </script>
