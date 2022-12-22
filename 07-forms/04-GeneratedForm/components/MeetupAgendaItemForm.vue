@@ -62,29 +62,22 @@
       </div>
     </div>
 
-    <ui-form-group :label="setTitle">
-      <ui-input name="title"
-                v-model="localAgendaItem.title"
-                @change="
-              $emit('update:agendaItem', {
-                ...agendaItem,
-                title: $event.target.value,
-              })
-            "
-      />
-    </ui-form-group>
+     <ui-form-group
+       :label="item.label" v-for="(item, key) in agendaSchemas[localAgendaItem.type]" :key="key" >
+       <component :is="item['component']"
+                  :name="item.props.name"
+                  :multiline="item.props.multiline"
+                  v-model="localAgendaItem[key]"
+       />
+      </ui-form-group>
+
     <ui-form-group v-if="localAgendaItem.type == 'talk'" label="Докладчик">
       <ui-input
         name="speaker"
         v-model="localAgendaItem.speaker"
       />
     </ui-form-group>
-    <ui-form-group v-if="localAgendaItem.type == 'talk' || localAgendaItem.type == 'other'"  label="Описание">
-      <ui-input multiline
-                name="description"
-                v-model="localAgendaItem.description"
-      />
-    </ui-form-group>
+
     <ui-form-group v-if="localAgendaItem.type == 'talk'" label="Язык">
       <ui-dropdown
         title="Язык"
@@ -234,6 +227,7 @@ export default {
   data(){
     return {
       localAgendaItem: { ...this.agendaItem },
+      agendaSchemas: agendaItemFormSchemas
 
 
     }
