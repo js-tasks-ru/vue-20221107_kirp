@@ -10,8 +10,7 @@
 export default {
   name: 'UiCheckbox',
   props:{
-    modelValue: [Array, Boolean, Set, String],
-    name:String
+    modelValue: [Array, Boolean, Set, String]
   },
   emits: ['update:modelValue'],
    inheritAttrs: false,
