@@ -1,34 +1,3 @@
-<!--+<template>-->
-<!--  <fieldset class="agenda-item-form">-->
-<!--    <button type="button" class="agenda-item-form__remove-button">-->
-<!--      <ui-icon icon="trash" />-->
-<!--    </button>-->
-
-<!--    <ui-form-group>-->
-<!--      <ui-dropdown title="Тип" :options="$options.agendaItemTypeOptions" name="type" />-->
-<!--    </ui-form-group>-->
-
-<!--    <div class="agenda-item-form__row">-->
-<!--      <div class="agenda-item-form__col">-->
-<!--        <ui-form-group label="Начало">-->
-<!--          <ui-input type="time" placeholder="00:00" name="startsAt" />-->
-<!--        </ui-form-group>-->
-<!--      </div>-->
-<!--      <div class="agenda-item-form__col">-->
-<!--        <ui-form-group label="Окончание">-->
-<!--          <ui-input type="time" placeholder="00:00" name="endsAt" />-->
-<!--        </ui-form-group>-->
-<!--      </div>-->
-<!--    </div>-->
-
-<!--    <ui-form-group label="Заголовок">-->
-<!--      <ui-input name="title" />-->
-<!--    </ui-form-group>-->
-<!--    <ui-form-group label="Описание">-->
-<!--      <ui-input multiline name="description" />-->
-<!--    </ui-form-group>-->
-<!--  </fieldset>-->
-<!--</template>-->
 <template>
   <fieldset class="agenda-item-form">
     <button type="button" class="agenda-item-form__remove-button" @click="cleanAgenda">
@@ -68,25 +37,9 @@
                   :name="item.props.name"
                   :multiline="item.props.multiline"
                   v-model="localAgendaItem[key]"
+                  :options="item.props.options"
        />
       </ui-form-group>
-
-    <ui-form-group v-if="localAgendaItem.type == 'talk'" label="Докладчик">
-      <ui-input
-        name="speaker"
-        v-model="localAgendaItem.speaker"
-      />
-    </ui-form-group>
-
-    <ui-form-group v-if="localAgendaItem.type == 'talk'" label="Язык">
-      <ui-dropdown
-        title="Язык"
-        :options="$options.talkLanguageOptions"
-        name="language"
-        v-model="localAgendaItem.language"
-
-      />
-    </ui-form-group>
   </fieldset>
 </template>
 <script>
@@ -227,7 +180,7 @@ export default {
   data(){
     return {
       localAgendaItem: { ...this.agendaItem },
-      agendaSchemas: agendaItemFormSchemas
+      agendaSchemas: {...agendaItemFormSchemas}
 
 
     }
@@ -269,7 +222,6 @@ export default {
      deep: true,
      handler() {
        this.$emit('update:agendaItem', {...this.localAgendaItem});
-       console.log(agendaItemFormSchemas[this.localAgendaItem])
      }
    },
     'localAgendaItem.startsAt':{
