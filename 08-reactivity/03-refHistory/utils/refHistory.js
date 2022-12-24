@@ -14,6 +14,7 @@ export function refHistory(source) {
   },
   {
     immediate: true,
+    flush: 'sync'
   },
 );
 const history = ref(history_values);
