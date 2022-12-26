@@ -1,7 +1,7 @@
 <template>
   <div class="pagination-container">
     <!-- Контент страницы -->
-<slot v-for="item in itemsForShow" :item="localItem[item]"> item </slot>
+<slot v-for="item in getItemsList" :item="items[item]"> </slot>
   </div>
 </template>
 
@@ -25,20 +25,23 @@ export default {
       required: true,
     }
   },
-  data(){
-    return {
-      localItem: {...this.items},
-      itemsForShow: [0,1]
-    }
-  },
-  watch:{
-     page: function() {
+  computed:{
+     getItemsList: function() {
+       let itemsForShow = []
+         for(let i=0; i<this.items.length;i++){
+        itemsForShow.push(i);
+      };
+      let itemsArray = itemsForShow;
+      const firstPart = itemsArray.slice(0, this.perPage);
+      const secondPart = itemsArray.slice(this.perPage, this.perPage + this.perPage);
+      const thirdPart = itemsArray.slice(this.perPage * 2);
+
       if (this.page == 1) {
-        return this.itemsForShow = [0, 1];
+        return firstPart;
       } else if (this.page == 2) {
-        return this.itemsForShow = [2, 3];
+        return secondPart;
       } else {
-        return this.itemsForShow = [4];
+        return thirdPart;
       }
     }
   }
