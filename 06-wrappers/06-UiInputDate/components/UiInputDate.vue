@@ -34,9 +34,8 @@ export default {
         if(this.modelValue == null){
           return result = ''
         } else {
-        let date = new Date(this.modelValue);
 
-        console.log(date)
+        let date = new Date(this.modelValue);
         let hours = String(date.getUTCHours()).padStart(2, "0");
         let minutes = String(date.getUTCMinutes()).padStart(2, "0");
         let seconds = String(date.getUTCSeconds()).padStart(2, "0");
@@ -50,16 +49,18 @@ export default {
         result = hours + ':' + minutes + ':' + seconds;
       } else if (this.type === 'datetime-local'){
        result = inputDateTime;
+
       }
+
         return result;
         }
       },
 
       set(value) {
         if(value.includes(":") && !value.includes("T")){
-          value = '1970-01-01T' + value
+          value = '1970-01-01T' + value;
         }
-        let dateAsNumber = new Date(value).getTime()
+        let dateAsNumber = new Date(value+'Z').getTime();
         this.$emit('update:modelValue', dateAsNumber);
       },
     },

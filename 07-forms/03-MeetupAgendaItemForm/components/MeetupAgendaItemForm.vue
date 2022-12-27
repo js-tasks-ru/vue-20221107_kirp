@@ -149,16 +149,6 @@ export default {
     }
   },
  watch: {
-   agendaItem: {
-     deep: true,
-     immediate: true,
-     handler() {
-       if (this.agendaItem.id != this.localAgendaItem.id) {
-         this.localAgendaItem = {...this.agendaItem};
-       }
-
-     },
-   },
    localAgendaItem: {
      deep: true,
      handler() {
