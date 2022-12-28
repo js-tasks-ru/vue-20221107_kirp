@@ -28,7 +28,7 @@
      <input
       ref="input"
       v-else-if="modelModifiers.lazy==true"
-      v-model.lazy="modelProxy"
+      v-model="modelProxy"
       class="form-control"
       @click="setFocus"
       :class="{'form-control_sm': small, 'form-control_rounded': rounded}"

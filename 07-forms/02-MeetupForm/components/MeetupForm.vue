@@ -1,5 +1,5 @@
 <template>
-  <form class="meetup-form">
+  <form class="meetup-form" @submit.prevent="handleSubmit">
     <div class="meetup-form__content">
       <fieldset class="meetup-form__section">
         <ui-form-group label="Название">
@@ -31,9 +31,9 @@
       <h3 class="meetup-form__agenda-title">Программа</h3>
 
       <meetup-agenda-item-form
-        v-for="(agendaItem, index) in meetup.agenda"
+        v-for="(agendaItem, index) in localMeetUpData.agenda"
          :key="agendaItem.id"
-         :agenda-item="agendaItem"
+         v-model:agenda-item="localMeetUpData.agenda[index]"
          class="meetup-form__agenda-item"
         @remove="removeAgendaItem(index)"
        />
@@ -49,8 +49,8 @@
       <div class="meetup-form__aside-stick">
         <!-- data-test атрибуты используются для поиска нужного элемента в тестах, не удаляйте их -->
         <ui-button variant="secondary" block class="meetup-form__aside-button" data-test="cancel" @click="$emit('cancel')">Отмена</ui-button>
-        <ui-button variant="primary" block class="meetup-form__aside-button" data-test="submit" type="submit" @click="$emit('submit', localMeetUpData)">
-          SUBMIT
+        <ui-button variant="primary" block class="meetup-form__aside-button" data-test="submit" type="submit" @submit="localMeetUpData = $event" >
+          {{ submitText }}
         </ui-button>
       </div>
     </div>
@@ -67,7 +67,6 @@ import UiImageUploader from './UiImageUploader';
 import UiInput from './UiInput';
 import UiInputDate from './UiInputDate';
 import { createAgendaItem } from '../meetupService';
-
 
 
 
@@ -100,17 +99,36 @@ export default {
     };
   },
 
-  emits: ['submit', 'cancel', 'remove'],
+  emits: ['submit', 'cancel', 'remove', 'update:meetup'],
   methods: {
     addAgendaItem() {
       const newItem = createAgendaItem();
+      if (this.localMeetUpData.agenda.length > 0){
+        let lastItem = this.localMeetUpData.agenda[this.localMeetUpData.agenda.length - 1];
+        newItem.startsAt = lastItem.endsAt;
+      }
       this.localMeetUpData.agenda.push(newItem);
     },
 
     removeAgendaItem(index) {
       this.localMeetUpData.agenda.splice(index, 1);
     },
-
+    handleSubmit(){
+      this.$emit('submit', cloneDeep(this.localMeetUpData))
+    }
+  },
+    watch: {
+    localMeetUpData: {
+      deep: true,
+      handler(newValue, oldValue) {
+        for (let i in newValue.agenda){
+         if(this.localMeetUpData.agenda[i] != newValue.agenda[i]){
+           this.localMeetUpData.agenda[i] = newValue.agenda[i]
+         }
+        }
+         this.localMeetUpData.agenda;
+      },
+    },
   },
 
 };
