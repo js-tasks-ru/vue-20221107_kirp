@@ -1,10 +1,54 @@
 <template>
-  <button class="button button_secondary button_block">BUTTON</button>
+  <component v-if="withType" :is="tag" :type="chosenTypeTag" v-bind="$attrs" class="button" :class="[{button_block: block}, setClass]" ><slot></slot></component>
+  <component v-else-if="!withType" :is="tag" v-bind="$attrs" class="button" :class="[{button_block: block}, setClass]" ><slot></slot></component>
 </template>
 
 <script>
 export default {
   name: 'UiButton',
+  inheritAttrs: false,
+  data(){
+    return {
+      primary: `button_primary`,
+      secondary: `button_secondary`,
+      danger: `button_danger`,
+      chosenTypeTag: 'button',
+      withType: true
+    }
+  },
+  props: {
+    tag: {
+      default: 'button'
+    },
+    variant: {
+      type: String,
+      default: `secondary`
+    },
+    block: Boolean
+  },
+  computed: {
+      setClass(){
+        if (this.variant == 'primary') {
+          return this.primary
+        } else if (this.variant == 'secondary') {
+          return this.secondary
+        } else {
+          return this.danger
+        }
+      }
+  },
+  beforeMount() {
+    if (this.$attrs.type == undefined && this.tag == 'button'){
+      this.chosenTypeTag = 'button';
+          this.withType = true;
+        } else if (this.$attrs.type != undefined && this.tag == 'button') {
+          this.chosenTypeTag = this.$attrs.type;
+          this.withType = true;
+        } else {
+          this.withType = false;
+        }
+  }
+
 };
 </script>
 

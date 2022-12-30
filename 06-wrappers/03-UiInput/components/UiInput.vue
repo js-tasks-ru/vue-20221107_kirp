@@ -1,20 +1,79 @@
 <template>
-  <div class="input-group input-group_icon input-group_icon-left input-group_icon-right">
-    <div class="input-group__icon">
-      <img class="icon" alt="icon" />
-    </div>
+  <div  class="input-group input-group_icon" :class="{'input-group_icon-left': $slots['left-icon'], 'input-group_icon-right':$slots['right-icon'] }" >
 
-    <input ref="input" class="form-control form-control_rounded form-control_sm" />
+      <template v-if="$slots['left-icon']">
+        <div class="input-group__icon ">
+        <slot name="left-icon" />
+         </div>
+      </template>
 
-    <div class="input-group__icon">
-      <img class="icon" alt="icon" />
-    </div>
+
+
+    <textarea
+      ref="input"
+      v-if="multiline"
+      v-model="modelProxy"
+      @click="focus"
+      class="form-control"
+      :class="{'form-control_sm': small, 'form-control_rounded': rounded}"
+      v-bind="$attrs" />
+    <input
+      ref="input"
+      v-else-if="!multiline && !modelModifiers.lazy"
+      v-model="modelProxy"
+      class="form-control"
+      @click="setFocus"
+      :class="{'form-control_sm': small, 'form-control_rounded': rounded}"
+      v-bind="$attrs" />
+     <input
+      ref="input"
+      v-else-if="modelModifiers.lazy==true"
+      v-model="modelProxy"
+      class="form-control"
+      @click="setFocus"
+      :class="{'form-control_sm': small, 'form-control_rounded': rounded}"
+      v-bind="$attrs" />
+
+   <template v-if="$slots['right-icon']">
+        <div class="input-group__icon input-group_icon-right">
+        <slot name="right-icon" />
+         </div>
+      </template>
   </div>
 </template>
 
 <script>
 export default {
   name: 'UiInput',
+  inheritAttrs: false,
+  props: {
+    small:Boolean,
+    rounded:Boolean,
+    multiline: Boolean,
+    modelValue: String,
+    modelModifiers: {
+      default: () => ({})
+    }
+  },
+  emits: ['update:modelValue'],
+  methods:{
+    focus(){
+      this.$refs['input'].focus();
+
+    }
+  },
+  computed: {
+    modelProxy: {
+      get() {
+
+        return this.modelValue;
+      },
+      set(value) {
+
+        this.$emit('update:modelValue', value)
+      }
+    }
+  }
 };
 </script>
 
