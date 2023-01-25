@@ -12,10 +12,10 @@
         <div class="calendar-view__cell-day">{{ day }}</div>
         <div class="calendar-view__cell-content"></div>
       </div>
-      <div class="calendar-view__cell" :tabindex="day" v-for="day in daysCurrentMonth">
+      <div class="calendar-view__cell" :tabindex="day" v-for="(data, day) in daysCurrentMonth">
         <div class="calendar-view__cell-day">{{ day }}</div>
-        <div class="calendar-view__cell-content">
-          <a :href="`/meetups/${day}`" class="calendar-event" v-if="day in currentMonthMeetups">{{ currentMonthMeetups[day].title }}</a>
+        <div class="calendar-view__cell-content" v-if="data.length > 0">
+          <a :href="`/meetups/${day}`" class="calendar-event" v-for="meetup in data">{{ meetup.title }}</a>
         </div>
       </div>
       <div class="calendar-view__cell calendar-view__cell_inactive" :tabindex="day" v-for="day in daysNextMonth">
@@ -47,7 +47,6 @@ export default {
       previousMonth: undefined,
       nextMonth: undefined,
       currentYear: undefined,
-      currentMonthMeetups: {},
     };
   },
   methods: {
@@ -58,8 +57,6 @@ export default {
       this.currentMonth = currMonth;
       this.previousMonth = new Date(currYear, currMonth, 0).getMonth();
       this.nextMonth = new Date(currYear, currMonth, 32).getMonth();
-      this.currentMonthMeetups = {};
-      this.getMeetUpsForShow();
       let firstDate = new Date(currYear, currMonth, 1);
       let firstDateDay = firstDate.getUTCDay();
       let lastDate = new Date(currYear, currMonth + 1, 0);
@@ -82,13 +79,13 @@ export default {
         daysNextMonth.push(date);
       }
       this.daysNextMonth = daysNextMonth;
-      let daysCurrentMonth = [];
+      let daysCurrentMonth = {};
       for (let step = 1; step <= numDays; step++) {
         let date = new Date(currYear, currMonth, step).getDate();
-        daysCurrentMonth.push(date);
+        daysCurrentMonth[date] = [];
       }
       this.daysCurrentMonth = daysCurrentMonth;
-
+      this.getMeetUpsForShow();
     },
 
     getPreviousMonthsDaysList() {
@@ -107,9 +104,8 @@ export default {
        let meetupMonth = meetupDate.getMonth();
        let meetupYear = meetupDate.getFullYear();
        if(meetupMonth == this.currentMonth && meetupYear == this.currentYear){
-         this.currentMonthMeetups[meetupDate.getDate()] = this.meetups[i];
+         this.daysCurrentMonth[meetupDate.getDate()].push(this.meetups[i]);
        }
-
      }
     }
 
@@ -140,7 +136,7 @@ export default {
       return title
     }
   },
-  mounted() {
+  created() {
       this.getCurrentMonthsDaysList()
     }
 };
