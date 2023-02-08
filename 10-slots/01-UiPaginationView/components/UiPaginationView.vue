@@ -25,21 +25,22 @@ export default {
       required: true,
     }
   },
-    inject: {
-      pagesNumber: {
-        from: 'pagesCount',
-        default: 'default value'
-      }
-    },
+  data(){
+    return {
+      pagesForShow: this.perPage,
+      meetupsForShow: this.items
+  }
+  },
   computed:{
      getItemsList: function() {
        let itemsForShow = []
-         for(let i=0; i<this.items.length;i++){
+         for(let i=0; i<this.meetupsForShow.length;i++){
         itemsForShow.push(i);
       };
       let chunks = [];
       let start = 0;
-      let part = Math.ceil(itemsForShow.length / this.pagesNumber);
+      // let part = Math.ceil(itemsForShow.length / this.pagesNumber);
+      let part = this.pagesForShow;
        for (let i=0; i <= part; i++){
          let chunk = start + part;
           chunks.push(itemsForShow.slice(start, chunk))
@@ -49,7 +50,16 @@ export default {
        return chunks[meetupsForPage];
     }
   },
+  watch:{
+  perPage(newVal, oldVal){
+    this.pagesForShow = newVal
+  },
+  items(newVal, oldVal){
+    this.meetupsForShow = newVal
+  }
+}
 };
+
 </script>
 
 <style></style>

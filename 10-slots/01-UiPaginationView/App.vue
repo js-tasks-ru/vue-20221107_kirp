@@ -35,11 +35,6 @@ export default {
     pagesCount() {
       return Math.ceil(this.meetups.length / this.perPage);
     },
-  },
-   provide() {
-    return {
-      pagesCount: this.pagesCount
-    }
   }
 };
 </script>
