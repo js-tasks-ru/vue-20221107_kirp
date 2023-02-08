@@ -25,26 +25,30 @@ export default {
       required: true,
     }
   },
+    inject: {
+      pagesNumber: {
+        from: 'pagesCount',
+        default: 'default value'
+      }
+    },
   computed:{
      getItemsList: function() {
        let itemsForShow = []
          for(let i=0; i<this.items.length;i++){
         itemsForShow.push(i);
       };
-      let itemsArray = itemsForShow;
-      const firstPart = itemsArray.slice(0, this.perPage);
-      const secondPart = itemsArray.slice(this.perPage, this.perPage + this.perPage);
-      const thirdPart = itemsArray.slice(this.perPage * 2);
-
-      if (this.page == 1) {
-        return firstPart;
-      } else if (this.page == 2) {
-        return secondPart;
-      } else {
-        return thirdPart;
-      }
+      let chunks = [];
+      let start = 0;
+      let part = Math.ceil(itemsForShow.length / this.pagesNumber);
+       for (let i=0; i <= part; i++){
+         let chunk = start + part;
+          chunks.push(itemsForShow.slice(start, chunk))
+         start = chunk;
+       }
+       let meetupsForPage = this.page-1;
+       return chunks[meetupsForPage];
     }
-  }
+  },
 };
 </script>
 

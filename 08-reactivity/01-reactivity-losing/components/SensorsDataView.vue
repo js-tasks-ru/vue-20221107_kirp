@@ -51,9 +51,10 @@ export default {
        this.sensors = newValue;
        this.sensorsDataController = new SensorsDataController(new SensorsDataStreamingService());
        this.sensorsDataController.addDataCallback(this.callback);
-       setInterval(() => {
+       let interval = setInterval(() => {
       this.sensorsDataController.getData();
     }, 1000);
+       clearInterval(interval);
       },
       deep: true,
       immediate:true
