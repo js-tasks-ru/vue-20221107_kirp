@@ -45,6 +45,22 @@ export default {
       this.sensors = sensors;
     },
   },
+  watch:{
+    sensors: {
+      handler(newValue, oldValue) {
+       this.sensors = newValue;
+       this.sensorsDataController = new SensorsDataController(new SensorsDataStreamingService());
+       this.sensorsDataController.addDataCallback(this.callback);
+       let interval = setInterval(() => {
+      this.sensorsDataController.getData();
+    }, 1000);
+       clearInterval(interval);
+      },
+      deep: true,
+      immediate:true
+
+    }
+  }
 };
 </script>
 

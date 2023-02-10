@@ -15,7 +15,7 @@
 
 <script>
 let lastId = 0;
-
+import { nextTick } from 'vue'
 export default {
   name: 'MiniMessenger',
 
@@ -44,6 +44,16 @@ export default {
       this.newMessage = '';
     },
   },
+  watch:{
+    messages:{
+      handler(value) {
+        this.$nextTick(() => {
+         this.$refs.items[this.messages.length - 1].scrollIntoView({ behavior: "auto" });
+   });
+      },
+      deep: true
+    }
+  }
 };
 </script>
 

@@ -1,10 +1,19 @@
 <template>
-  <a class="link">Link!</a>
+  <component :is="tag" class="link" v-bind="$attrs" :to="to"><slot></slot></component>
 </template>
 
 <script>
 export default {
   name: 'UiLink',
+  inheritAttrs: false,
+  props:{
+    tag: {
+      default: 'RouterLink'
+
+    },
+    to: {
+    }
+  }
 };
 </script>
 

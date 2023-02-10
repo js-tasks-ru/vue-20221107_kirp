@@ -9,7 +9,19 @@
 
 <script>
 import MeetupAgendaItemForm from './components/MeetupAgendaItemForm';
-
+let lastId = -1;
+function createAgendaItem() {
+  return {
+    id: lastId--,
+    startsAt: '00:00',
+    endsAt: '00:00',
+    type: 'other',
+    title: null,
+    description: null,
+    speaker: null,
+    language: null,
+  };
+}
 export default {
   name: 'App',
 
@@ -32,6 +44,7 @@ export default {
 
   methods: {
     handleRemove() {
+      this.agendaItem = createAgendaItem();
       alert('removed');
     },
   },
