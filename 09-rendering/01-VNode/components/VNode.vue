@@ -21,8 +21,7 @@ export default {
     return list_elements;
 
     } else {
-          let vnode = h(this.vnode.type, this.vnode.props, this.vnode.children);
-    return vnode;
+    return this.vnode;
     }
 
 
